@@ -1,0 +1,46 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "psimon-h7"
+version = "2.3.0"
+authors = [
+  { name = "Jacobo Tlacaelel Mina Rodriguez" },
+]
+description = "Metriplectic Quantum Dynamics Framework based on Simon's Algorithm"
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+dependencies = [
+    "numpy",
+    "scipy",
+    "plotly",
+    "streamlit",
+    "requests",
+    "algoliasearch",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/user/psimon-h7"
+"Bug Tracker" = "https://github.com/user/psimon-h7/issues"
+
+[project.scripts]
+simon-h7 = "main:main"
+
+[tool.hatch.build.targets.sdist]
+exclude = [
+  "/.venv",
+  "/source",
+  "/.pytest_cache",
+  "/__pycache__",
+  "*.pyc",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["core", "physics", "quantum"]

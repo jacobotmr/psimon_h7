@@ -1,0 +1,7 @@
+numpy
+scipy
+pytest
+algoliasearch
+requests
+streamlit
+plotly
