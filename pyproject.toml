@@ -27,8 +27,8 @@ dependencies = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/user/psimon-h7"
-"Bug Tracker" = "https://github.com/user/psimon-h7/issues"
+"Homepage" = "https://github.com/jacobotmr/psimon_h7"
+"Bug Tracker" = "https://github.com/jacobotmr/psimon_h7/issues"
 
 [project.scripts]
 simon-h7 = "main:main"
