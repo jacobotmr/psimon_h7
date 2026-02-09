@@ -6,7 +6,9 @@
 
 ## 🌌 Overview
 
-The **PSimon Framework** is a high-precision computational suite designed to simulate quantum systems under the **Metriplectic** formalism. It bridges the gap between conservative Hamiltonian dynamics (Information) and dissipative Metric dynamics (Entropy), governed by the rigorous principles of **El Mandato Metriplético**.
+The **PSimon Framework** (psimon_h7) is a high-precision computational suite designed to simulate quantum systems under the **Metriplectic** formalism. It bridges the gap between conservative Hamiltonian dynamics (Information) and dissipative Metric dynamics (Entropy), governed by the rigorous principles of **El Mandato Metriplético**.
+
+**Concepto Central:** Truncamiento en el campo de Fock, dentro de un espacio de Hilbert, confinado en la esfera de Bloch.
 
 The core engine utilizes **Simon's Algorithm** to discover hidden periodicities in state spaces modulated by the **Golden Operator ($O_n$)**.
 
