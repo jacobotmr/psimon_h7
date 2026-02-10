@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "psimon-h7"
-version = "2.3.1"
+version = "2.3.2"
 authors = [
   { name = "Jacobo Tlacaelel Mina Rodriguez" },
 ]
@@ -31,7 +31,7 @@ dependencies = [
 "Bug Tracker" = "https://github.com/jacobotmr/psimon_h7/issues"
 
 [project.scripts]
-simon-h7 = "main:main"
+simon-h7 = "psimon_h7.main:main"
 
 [tool.hatch.build.targets.sdist]
 exclude = [
@@ -43,8 +43,4 @@ exclude = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["core", "physics", "quantum", "models"]
-include = [
-  "main.py",
-  "frontend.py",
-]
+packages = ["core", "physics", "quantum", "models", "psimon_h7"]
