@@ -55,6 +55,80 @@ Validate the physics and logic:
 ```bash
 pytest tests/
 ```
+🚀 Installation and Security
+```Bash
+pip install -U psimon-h7
+```
+>Security Configuration (v2.3.3+)
+>For production and distribution, manage your keys using environment variables.
 
----
+```text
+Create a .env file or export them in your terminal:
+
+export ALGOLIA_APP_ID="your_app_id"
+export ALGOLIA_API_KEY="your_api_key"
+Refer to .env.example for more details.
+```
+🖥️ Command Line Interface (CLI)
+
+>The package installs a global command simon-h7. 
+
+You can use it to run demonstrations or launch the dashboard.
+Launch the Dashboard (GUI)
+The Streamlit dashboard is the most visual way to explore the framework:
+```bash
+simon-h7 --gui
+```
+>Run Demo
+``` 
+ _________________________________________________________________
+| Command               |               Description               |
+-------------------------------------------------------------------
+|simon-h7 --demoRuns    | the base Simon simulation in Fock space.|
+|simon-h7 --beta        | Simulation of isotope beta decay.       |
+|simon-h7 --chiral      | Analysis of chiral fermionic systems.   |
+|simon-h7 --convergence | Convergence analysis towards H7.        |
+|sim-h7 --all           | Runs all demonstrations sequentially.   |
+-------------------------------------------------------------------
+
+```
+>🛠️ API Usage (Python)
+
+If you want to integrate the framework into your own scripts:Basic Example:
+```bash
+# Symmetry SearchPython
+from core.psimon_framework import PSimon, PSimonConfig, FrameworkMode
+
+# Configure the system
+config = PSimonConfig(mode=FrameworkMode.CLASSICAL_SIMULATION)
+
+# Initialize the framework
+framework = PSimon(config)
+
+# Execute Simon search
+result = framework.run_simon_search()
+```
+
+### View results
+```bash
+print(f"Secret string found?: {result['secret_string_found']}")
+if result['secret_string_found']:
+    print(f"Recovered value (s): {result['recovered_secret']}")
+Exploring NucleonsPythonfrom core.psimon_framework import create_nucleon_explorer
+```
+### Create specialized explorer
+```bash
+explorer = create_nucleon_explorer()
+```
+### Construct nucleon system (fermions in Fock space)
+```bash
+nucleons = explorer.construct_nucleon_system()
+```
+### Verify H7 conservation
+```bash
+h7_status = explorer.verify_h7_conservation()
+print(f"'uuu' state conserved: {h7_status['uuu']}")
+```
+📚 Documentation and ExamplesFor more advanced use cases, consult the examples.py file in the original repository or explore the physics and quantum modules included in the package.
+
 *Developed under the framework of the **Analogy Rigor Manifesto** by Jacobo Tlacaelel Mina Rodriguez.*
