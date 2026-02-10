@@ -5,7 +5,7 @@ This script serves as the central command-line interface for the PSimon Framewor
 integrating Fock space foundations, Metriplex dynamics, and Simon's Algorithm.
 
 Author: Jacobo Tlacaelel Mina Rodríguez
-Version: 0.1.1
+Version: 2.3.1
 """
 
 import sys
@@ -92,12 +92,21 @@ def main():
 
     if args.gui:
         import os
+        import subprocess
         print("\n" + "=" * 80)
         print("LAUNCHING STREAMLIT DASHBOARD...")
         print("=" * 80)
-        # Use the absolute path to the venv streamlit
-        venv_path = os.path.join(os.getcwd(), ".venv", "bin", "streamlit")
-        os.system(f"{venv_path} run frontend.py")
+        
+        # Determine the path to frontend.py relative to this script (main.py)
+        # In a pip installation, they will be in the same site-packages directory
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        frontend_path = os.path.join(current_dir, "frontend.py")
+        
+        if not os.path.exists(frontend_path):
+            print(f"Error: Component 'frontend.py' not found at {frontend_path}")
+            sys.exit(1)
+            
+        subprocess.run([sys.executable, "-m", "streamlit", "run", frontend_path])
 
     if args.demo or args.convergence or args.beta or args.chiral or args.search or args.cognitive or args.all:
         print("\n" + "=" * 80)
