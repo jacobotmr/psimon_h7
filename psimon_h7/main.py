@@ -5,7 +5,7 @@ This script serves as the central command-line interface for the PSimon Framewor
 integrating Fock space foundations, Metriplex dynamics, and Simon's Algorithm.
 
 Author: Jacobo Tlacaelel Mina Rodríguez
-Version: 2.3.2
+Version: 2.3.3
 """
 
 import sys

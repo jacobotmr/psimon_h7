@@ -9,6 +9,7 @@ Author: Jacobo Tlacaelel Mina Rodríguez
 
 import time
 import requests
+import os
 from typing import Dict, List, Any, Optional
 from algoliasearch.search.client import SearchClientSync
 
@@ -79,11 +80,10 @@ def demonstrate_algolia():
     print("ALGOLIA SEARCH MODEL: NUCLEAR FERMIONS")
     print("=" * 80)
     
-    # API Keys provided by user (Template)
-    # WARNING: In production, use environment variables
-    APP_ID = "2JA5JZEL4C"
-    API_KEY = "45a52e90d076c0286030e9eeb3afeae6"
-    INDEX_NAME = "nuclear_fermion_index"
+    # API Keys provided by environment variables
+    APP_ID = os.getenv("ALGOLIA_APP_ID", "2JA5JZEL4C")
+    API_KEY = os.getenv("ALGOLIA_API_KEY", "45a52e90d076c0286030e9eeb3afeae6")
+    INDEX_NAME = os.getenv("ALGOLIA_INDEX_NAME", "nuclear_fermion_index")
     
     try:
         indexer = AlgoliaIndexer(APP_ID, API_KEY)

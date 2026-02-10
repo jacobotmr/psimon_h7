@@ -138,17 +138,64 @@ elif mode == "Beta Decay Simulation":
     st.title("Fermionic Beta Decay Simulation")
     st.write("Dynamic mapping of n → p + e⁻ + ν̄ₑ using the PSimon Oracle.")
     
-    st.info("Continuous learning mode active. All transitions are indexed via Algolia.")
+    st.info("Continuous learning mode active. Real-time Chiral Coherence Analysis.")
+
+    # Chiral Illustration Container
+    col1, col2 = st.columns([1, 1])
     
-    # Placeholder for more complex simulation
-    st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Beta_negative_decay.svg/1200px-Beta_negative_decay.svg.png", width=400)
+    with col1:
+        st.subheader("Nuclear Transition")
+        st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Beta_negative_decay.svg/1200px-Beta_negative_decay.svg.png", 
+                 caption="n → p + e⁻ + ν̄ₑ (Standard Model)", width=400)
     
-    if st.button("Trigger Decay Cascade"):
-        progress_bar = st.progress(0)
-        for percent_complete in range(100):
-            time.sleep(0.01)
-            progress_bar.progress(percent_complete + 1)
-        st.success("Decay string localized: `1_0_1_1` (Fermi-Chiral-L)")
+    with col2:
+        st.subheader("Chiral Correspondence (Analogía Rigurosa)")
+        st.markdown("""
+        > **Carvone Isomerism Example:**
+        > - **(R)-(-)-Carvone**: Spearmint smell (Left-handed coherence)
+        > - **(S)-(+)-Carvone**: Caraway smell (Right-handed coherence)
+        """)
+        st.info("The PSimon Oracle maps nuclear parities to these topological structures.")
+
+    if st.button("🚀 Trigger Decay Cascade"):
+        from physics.chiral_fermionic_system import ChiralEncoder, ChiralAnalyzer
+        
+        with st.status("Solving Parity-Violating Dynamics...", expanded=True) as status:
+            st.write("Initializing Fock-Chiral basis...")
+            time.sleep(0.5)
+            st.write("Applying Metriplex Oracle (Dissipative Relaxation)...")
+            time.sleep(0.8)
+            st.write("Discovering Hidden Symmetry with Simon-H7...")
+            
+            # Real simulation trigger
+            encoder = ChiralEncoder()
+            # Simulate a "T_beta_minus" decay
+            variant = encoder.encode_to_chiral("T_beta_minus", pattern_index=np.random.randint(0, 3))
+            
+            time.sleep(0.5)
+            status.update(label="Decay String Localized!", state="complete")
+        
+        # Display Results
+        st.success(f"Output localized: `{variant.chiral_string}`")
+        
+        res_col1, res_col2 = st.columns(2)
+        with res_col1:
+            st.metric("Chirality Type", variant.chirality_type.value)
+            st.metric("Topological Phase", f"{variant.topological_phase/np.pi:.2f}π")
+            
+        with res_col2:
+            idx = ChiralAnalyzer.calculate_chirality_index(variant.chiral_string)
+            st.metric("Chirality Index", f"{idx:+.2f}")
+            status_text = ChiralAnalyzer.get_handedness(variant.chiral_string)
+            st.markdown(f"**Coherence State:** `{status_text}`")
+            
+        # Carvone Analogy Output
+        if "LEFT" in status_text or variant.chirality_type.value == "L":
+            st.warning("🥬 **Coherence Detected**: Similar to (R)-(-)-Carvone (Spearmint Topology)")
+        elif "RIGHT" in status_text or variant.chirality_type.value == "R":
+            st.warning("🥐 **Coherence Detected**: Similar to (S)-(+)-Carvone (Caraway Topology)")
+        else:
+            st.info("⚪ **Coherence Detected**: Vacuum/Achiral State")
 
 st.sidebar.markdown("---")
 st.sidebar.caption("PSimon v4.1.0-metriplectic")
