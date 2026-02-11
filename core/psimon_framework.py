@@ -23,40 +23,40 @@ from quantum.simon_improved import SimonImproved, SimonConfig
 
 
 class FrameworkMode(Enum):
-    """Execution modes for the framework."""
-    CLASSICAL_SIMULATION = "classical_simulation"  # Full classical simulation (deterministic)
-    NISQ_SIMULATION = "nisq_simulation"           # Noisy simulation (realistic)
-    HARDWARE_READY = "hardware_ready"             # Generate hardware instructions
+    """Execution modes for the PSimon Processor."""
+    TOPOLOGICAL_PROCESSOR = "topological_processor"  # Ideal topological evolution
+    STOCHASTIC_POTENTIAL = "stochastic_potential"    # Noisy simulation
+    HARDWARE_READY = "hardware_ready"                # Generate hardware instructions
 
 
 @dataclass
 class PSimonConfig:
     """Master configuration for PSimon framework."""
     
-    # Quantum resources
-    fock_config: FockConfig = field(default_factory=lambda: FockConfig(n_modes=3, n_max=3))
+    # Quantum resources (Default: 3-bit H7 Topological Processor)
+    fock_config: FockConfig = field(default_factory=lambda: FockConfig(n_modes=3, n_max=1, use_gray_code=False))
     
     # Oracle/metriplex
     metriplex_config: MetriplexConfig = field(default_factory=MetriplexConfig)
     
-    # Simon's algorithm
-    simon_config: SimonConfig = field(default_factory=lambda: SimonConfig(n_qubits=3))
+    # Simon's algorithm (Default: 3-qubit H7 Search)
+    simon_config: SimonConfig = field(default_factory=lambda: SimonConfig(n_qubits=3, gray_code_enabled=False))
     
     # Framework-level
-    mode: FrameworkMode = FrameworkMode.CLASSICAL_SIMULATION
+    mode: FrameworkMode = FrameworkMode.TOPOLOGICAL_PROCESSOR
     verbose: bool = True
     random_seed: Optional[int] = None
 
 
 class PSimon:
     """
-    Unified framework for second quantization quantum computing.
+    Unified PSimon Topological Processor.
     
     Integrates:
-    1. Fock space with configurable truncation
-    2. Metriplex momentum oracle with energy profiling
-    3. Simon's algorithm for symmetry discovery
-    4. H7 entanglement conservation laws
+    1. Fock space foundations for potential fields
+    2. Metriplex topological oracle with cyclic energy wrapping
+    3. H7 symmetry processor (Simon's algorithm)
+    4. H7 entanglement conservation laws (s = 7)
     
     Usage pattern:
         framework = PSimon(config)
@@ -116,31 +116,44 @@ class PSimon:
     
     def construct_nucleon_system(self) -> Dict[str, Any]:
         """
-        Construct fermion-boson system mapping nucleons to Fock states.
+        Construct nucleon system mapping quarks to segmented Fock states.
         
-        Maps:
-        - uuu (up triplet) → |3,0,0⟩ (3 excitations in mode 0)
-        - ddd (down triplet) → |0,3,0⟩ (3 excitations in mode 1)
-        - udu → symmetric superposition of modes 0,1
-        - dud → antisymmetric superposition of modes 0,1
+        H7 Processor Mapping (Wrapping 1-6, 2-5, 3-4):
+        - uud/ddu → |1,1,0⟩ + |0,0,1⟩ (H7 pair 6-1)
+        - ddu/uud → |0,1,1⟩ + |1,0,0⟩ (H7 pair 3-4)
+        - udu/dud → |1,0,1⟩ + |0,1,0⟩ (H7 pair 5-2)
+        - uuu/ddd → |1,1,1⟩ + |0,0,0⟩ (H7 pair 7-0, Truncated)
         
-        Returns state vectors and their relationships under H7 conservation.
+        Returns state vectors as topological potentials (H7 pairs).
         """
-        self._log("Constructing nucleon system")
+        self._log("Constructing nucleon system in H7 Processor")
         
         result = {}
         
-        # Single-quark basis states (per mode)
-        state_u = [3, 0, 0]  # Up triplet: 3 bosonic excitations
-        state_d = [0, 3, 0]  # Down triplet: 3 bosonic excitations
-        state_mixed = [1, 1, 1]  # Mixed: 1 per mode
+        # Base moments
+        states = {
+            'uud': (1, 1, 0), # 6
+            'ddu': (0, 1, 1), # 3
+            'udu': (1, 0, 1), # 5
+            'dud': (0, 1, 0), # 2
+            'uuu': (1, 1, 1), # 7
+            'ddd': (0, 0, 0)  # 0
+        }
         
-        # Construct state vectors
-        result['uuu'] = self.fock.state_vector(tuple(state_u))
-        result['ddd'] = self.fock.state_vector(tuple(state_d))
-        result['udu'] = self._create_superposition([state_u, state_d], [1, 1])
-        result['dud'] = self._create_superposition([state_u, state_d], [1, -1])
-        result['mixed'] = self.fock.state_vector(tuple(state_mixed))
+        # Helper to create H7 pairs (Topological Entanglement)
+        def h7_pair(occ):
+            v1 = self.fock.state_vector(occ)
+            idx1 = self.fock.state_to_index[occ]
+            idx2 = 7 ^ idx1
+            occ2 = self.fock.index_to_state[idx2]
+            v2 = self.fock.state_vector(occ2)
+            return (v1 + v2) / np.sqrt(2)
+
+        for name, occupation in states.items():
+            try:
+                result[name] = h7_pair(occupation)
+            except (ValueError, KeyError):
+                self._log(f"Warning: could not construct {name}")
         
         # Check H7 conservation for each
         h7_info = {}
@@ -178,23 +191,25 @@ class PSimon:
         """
         Map Fock state to 3-qubit computational basis.
         
-        This is a projection: we take maximum occupation number in any mode
-        and encode as binary.
+        H7 Processor Mapping: The Fock basis index (for n_max=1)
+        directly corresponds to the 3-bit computational basis.
         """
+        if len(fock_state) == 8:
+            return fock_state.copy() # Direct mapping for H7 Processor
+
         if len(fock_state) != self.fock.dim:
-            raise ValueError(f"State dimension mismatch: {len(fock_state)} != {self.fock.dim}")
+            raise ValueError(f"State dimension mismatch")
         
-        # Extract measurement basis probabilities
-        probs = np.abs(fock_state)**2
+        qubit_state = np.zeros(8, dtype=complex)
         
-        # For each basis state, compute its "qubit signature"
-        qubit_state = np.zeros(8, dtype=complex)  # 3-qubit = 8 computational states
-        
-        for idx, prob in enumerate(probs):
+        for idx, val in enumerate(fock_state):
+            if abs(val) < 1e-10: continue
             occupation = self.fock.basis_states[idx]
-            # Map occupation to qubit index via total occupation
-            qubit_idx = sum(occupation) % 8
-            qubit_state[qubit_idx] += prob * fock_state[idx]
+            # Map occupation bitstring to integer value
+            qubit_idx = 0
+            for bit in occupation:
+                qubit_idx = (qubit_idx << 1) | (int(bit) & 1)
+            qubit_state[qubit_idx % 8] += val
         
         return qubit_state
     
@@ -316,22 +331,22 @@ def create_default_framework() -> PSimon:
     return PSimon()
 
 
-def create_hardware_optimized_framework(n_qubits: int = 5) -> PSimon:
-    """Create framework optimized for NISQ hardware constraints."""
+def create_stochastic_framework(n_qubits: int = 3) -> PSimon:
+    """Create processor with stochastic potential modulation."""
     config = PSimonConfig(
-        fock_config=FockConfig(n_modes=min(3, n_qubits//2), n_max=2),
-        simon_config=SimonConfig(n_qubits=min(n_qubits, 8), noise_model='depolarizing'),
-        mode=FrameworkMode.NISQ_SIMULATION
+        fock_config=FockConfig(n_modes=n_qubits, n_max=1, use_gray_code=False),
+        simon_config=SimonConfig(n_qubits=n_qubits, noise_model='depolarizing', gray_code_enabled=False),
+        mode=FrameworkMode.STOCHASTIC_POTENTIAL
     )
     return PSimon(config)
 
 
 def create_nucleon_explorer() -> PSimon:
-    """Create framework specialized for nucleon/quark systems."""
+    """Create framework specialized for H7 nucleon/quark systems."""
     config = PSimonConfig(
-        fock_config=FockConfig(n_modes=3, n_max=3),
-        simon_config=SimonConfig(n_qubits=3, measurement_shots=2000),
-        mode=FrameworkMode.CLASSICAL_SIMULATION
+        fock_config=FockConfig(n_modes=3, n_max=1, use_gray_code=False),
+        simon_config=SimonConfig(n_qubits=3, measurement_shots=2000, gray_code_enabled=False),
+        mode=FrameworkMode.TOPOLOGICAL_PROCESSOR
     )
     return PSimon(config)
 

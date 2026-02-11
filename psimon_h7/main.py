@@ -24,7 +24,7 @@ def run_framework_demo():
     print("=" * 80)
     
     start_time = time.time()
-    config = PSimonConfig(mode=FrameworkMode.CLASSICAL_SIMULATION)
+    config = PSimonConfig(mode=FrameworkMode.TOPOLOGICAL_PROCESSOR)
     framework = PSimon(config)
     
     print("\n[Executing Simon's search...]")

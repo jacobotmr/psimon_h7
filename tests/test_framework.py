@@ -10,7 +10,7 @@ def test_framework_initialization():
     assert framework.simon is not None
 
 def test_framework_run_search():
-    config = PSimonConfig(mode=FrameworkMode.CLASSICAL_SIMULATION)
+    config = PSimonConfig(mode=FrameworkMode.TOPOLOGICAL_PROCESSOR)
     framework = PSimon(config)
     result = framework.run_simon_search()
     

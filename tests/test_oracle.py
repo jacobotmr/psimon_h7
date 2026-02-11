@@ -10,11 +10,11 @@ def test_oracle_initialization():
     assert len(oracle.energy_map) == 4
 
 def test_oracle_forward_mapping():
-    config = MetriplexConfig(momentum_range=(1, 3))
+    config = MetriplexConfig(momentum_range=(1, 6))
     oracle = MetriplexOracle(config)
     
     group, output, energy = oracle.forward(1)
-    assert group in ['A', 'B']
+    assert group in ['1-6', '2-5', '3-4']
     assert isinstance(output, np.ndarray)
     assert 0 <= energy <= 1.0
 
