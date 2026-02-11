@@ -27,9 +27,9 @@ def test_simon_hadamard():
 
 def test_simon_run_ideal():
     # Small system for fast testing
-    fock = FockBasis(FockConfig(n_modes=2, use_gray_code=True))
-    oracle = MetriplexOracle(MetriplexConfig(momentum_range=(0, 3)))
-    config = SimonConfig(n_qubits=2, n_queries=5, noise_model="ideal")
+    fock = FockBasis(FockConfig(n_modes=3, n_max=1, use_gray_code=False))
+    oracle = MetriplexOracle(MetriplexConfig(momentum_range=(0, 7)))
+    config = SimonConfig(n_qubits=3, n_queries=5, noise_model="ideal", gray_code_enabled=False)
     simon = SimonImproved(fock, oracle, config)
     
     result = simon.run()

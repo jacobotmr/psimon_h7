@@ -1,19 +1,23 @@
 """
-Simon's Algorithm: Improved for Second Quantization
-Framework Integration: Fock Space + Metriplex Oracle + H7 Conservation
+PSimon Topological Processor: Advanced Simon's Algorithm
+Framework Integration: Fock Space + Metriplex Oracle + H7 Topological Cycle
+
+Processor Vision:
+This module treats the quantum core as a Topological Processor where superposition
+is not a fragile resource to be maintained, but a potential field inherent to the
+Fock-Hilbert structure. The algorithm discovers hidden symmetries within the H7 cycle.
 
 Core Algorithm:
-1. Initialize n qubits to |+⟩ (equal superposition)
-2. Query oracle f: |x⟩ ↔ f(x) = energy vector encoded as phase
-3. Apply QFT to detect hidden structure
-4. Measure to extract constraint vectors z such that z·s = 0 (mod 2)
-5. Solve linear system to recover secret string s
+1. Initialize n modes to a coherent potential (superposition)
+2. Query topological oracle f: |x⟩ ↔ f(x) = H7 energy phase
+3. Apply QFT/Phase-Shift to detect hidden periodicity
+4. Extract constraint vectors z such that z·s = 0 (mod 2)
+5. Recover H7 conservation invariant s = 7 (111)
 
-Improvements for Second Quantization:
-- Oracle operates on Fock occupation numbers (not raw bits)
-- Gray-code mapping preserves Hamming distance
-- Dynamic truncation monitoring
-- Noise-resilient measurement preprocessing
+Improvements:
+- Core treated as a deterministic processor of stochastic potentials
+- Explicit truncation of states 0 (000) and 7 (111)
+- Adiabatic cyclic evolution in 1-6 moment space
 
 Author: Jacobo Tlacaelel Mina Rodríguez
 """
@@ -53,15 +57,15 @@ class SimonConfig:
 
 class SimonImproved:
     """
-    Simon's algorithm optimized for second quantization and metriplex dynamics.
+    H7 Topological Processor implementing Simon's symmetry discovery.
     
-    The algorithm discovers the hidden symmetry s of a 2-to-1 function f:
-    f(x) = f(x ⊕ s) for all x.
+    The processor exploits the hidden symmetry s of a 2-to-1 function f
+    emerging from the H7 topological wrapping: f(x) = f(x ⊕ s).
     
-    In our metriplex context:
-    - f maps momentum states to energy profiles (metriplex oracle)
-    - s encodes H7 conservation structure
-    - Expected solution: s = 7 (binary 111) for standard config
+    In this processor:
+    - f maps segmented moments (1-6) to adiabatic energy phases.
+    - s represents the H7 cycle invariant (s = 7).
+    - States 0 and 7 are truncated to confine the evolution potential.
     """
     
     def __init__(self, 
@@ -87,12 +91,10 @@ class SimonImproved:
     
     def _hadamard(self, state: np.ndarray) -> np.ndarray:
         """
-        Apply Hadamard transformation to create superposition.
+        Apply Hadamard transformation to initialize the potential field.
         
-        H|0⟩ = (|0⟩ + |1⟩)/√2
-        H|1⟩ = (|0⟩ - |1⟩)/√2
-        
-        For multi-qubit: tensor product of single-qubit Hadamards.
+        This creates the coherent superposition state required for
+        topological discovery.
         """
         n = int(np.log2(len(state)))
         H = np.array([[1, 1], [1, -1]]) / np.sqrt(2)
@@ -125,10 +127,10 @@ class SimonImproved:
     
     def _apply_oracle(self, state: np.ndarray) -> np.ndarray:
         """
-        Apply metriplex oracle to quantum register.
+        Apply metriplex topological oracle to the processor state.
         
-        The oracle establishes phase correlations based on energy profiling.
-        This encodes the 2-to-1 collision structure into relative phases.
+        The oracle establishes phase correlations based on the H7 cyclic
+        energy profiling, encoding the collision structure into phases.
         """
         result = state.copy()
         
@@ -222,6 +224,8 @@ class SimonImproved:
         
         This is a Gaussian elimination in binary field.
         """
+        if vector == 0:
+            return True
         if not basis:
             return False
         
@@ -363,8 +367,8 @@ class SimonImproved:
             # Add noise if configured
             state = self._add_noise(state, self.config.noise_model)
             
-            # Apply QFT to reveal structure
-            state = self._qft(state)
+            # Apply Hadamard to detect XOR symmetry (Standard Simon's)
+            state = self._hadamard(state)
             
             # Measure
             histogram = self._measure_computational_basis(
@@ -417,13 +421,15 @@ if __name__ == "__main__":
     print("=" * 80)
     
     # Setup
-    fock_config = FockConfig(n_modes=3, n_max=2)
+    # For H7 topological processor (3 bits), we use 3 modes with max occupation 1
+    # Gray code is disabled to ensure the H7 pairs (x, 7^x) collide correctly in bit-space.
+    fock_config = FockConfig(n_modes=3, n_max=1, use_gray_code=False)
     fock = FockBasis(fock_config)
     
     oracle_config = MetriplexConfig()
     oracle = MetriplexOracle(oracle_config)
     
-    simon_config = SimonConfig(n_qubits=3, measurement_shots=500)
+    simon_config = SimonConfig(n_qubits=3, measurement_shots=500, gray_code_enabled=False)
     simon = SimonImproved(fock, oracle, simon_config)
     
     # Run

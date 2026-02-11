@@ -33,7 +33,7 @@ class EnergyProfile(Enum):
 @dataclass
 class MetriplexConfig:
     """Configuration for metriplex oracle."""
-    momentum_range: Tuple[int, int] = (1, 6)  # [p_min, p_max]
+    momentum_range: Tuple[int, int] = (0, 7)  # [p_min, p_max] (0, 7 truncated)
     energy_profile: EnergyProfile = EnergyProfile.METRIPLEX
     normalization_target: float = 0.45  # Target normalized energy level
     collision_groups: Optional[Dict[str, List[int]]] = None
@@ -41,8 +41,10 @@ class MetriplexConfig:
     def __post_init__(self):
         if self.collision_groups is None:
             self.collision_groups = {
-                'A': [1, 2, 3],
-                'B': [4, 5, 6]
+                '1-6': [1, 6],
+                '2-5': [2, 5],
+                '3-4': [3, 4],
+                'TRUNCATED': [0, 7]
             }
 
 
@@ -78,10 +80,11 @@ class MetriplexOracle:
             elif self.config.energy_profile == EnergyProfile.QUADRATIC:
                 raw_energy = (p / self.p_max) ** 2
             elif self.config.energy_profile == EnergyProfile.METRIPLEX:
-                # Metriplex: tuned to match target normalization
-                # E(p) = target * (p / p_max)^α where α is chosen for consistency
-                alpha = 1.2  # Slightly superlinear for metriplex dynamics
-                raw_energy = self.config.normalization_target * (p / self.p_max) ** alpha
+                # Metriplex: tuned for H7 topological cycle (s=7 symmetry)
+                # We use a sinusoidal profile symmetric around p=3.5 to ensure
+                # E(p) = E(7-p), creating the 1-6, 2-5, 3-4 collisions.
+                # The 2pi cycle is reflected in the phase shift np.exp(2j * np.pi * E)
+                raw_energy = self.config.normalization_target * np.sin(np.pi * p / 7.0)
             else:
                 raise ValueError(f"Unknown energy profile: {self.config.energy_profile}")
             
@@ -206,12 +209,15 @@ class MetriplexOracle:
         """
         Map Fock occupation tuple to effective momentum.
         
-        Simple mapping: p = (total occupation mod range_size) + p_min
-        For 3-mode system: p = (n₀ + n₁ + n₂) mod 6 → [0..5], shift to [1..6]
+        H7 Mapping: momentum is the integer value of the occupation bitstring.
+        This ensures that p XOR (7-p) = 7, creating the H7 collision pairs.
+
+        Truncation: 0 (000) and 7 (111) are the boundary states.
+        Valid moments: 1, 2, 3, 4, 5, 6.
         """
-        total_occ = sum(occupation)
-        range_size = self.p_max - self.p_min + 1
-        p = (total_occ % range_size) + self.p_min
+        p = 0
+        for bit in occupation:
+            p = (p << 1) | (bit & 1)
         return p
     
     def get_oracle_info(self) -> Dict:
