@@ -1,5 +1,5 @@
 # PSimon Framework: Metriplectic Quantum Dynamics
-
+[![Upload Python Package](https://github.com/jacobotmr/psimon_h7/actions/workflows/publish.yml/badge.svg)](https://github.com/jacobotmr/psimon_h7/actions/workflows/publish.yml) 
 ![Project Status](https://img.shields.io/badge/Status-Beta-blueviolet?style=for-the-badge)
 ![Physics](https://img.shields.io/badge/Physics-Metriplectic-ff69b4?style=for-the-badge)
 ![Quantum](https://img.shields.io/badge/Algorithm-Simon's-blue?style=for-the-badge)
